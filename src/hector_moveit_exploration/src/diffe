@@ -1,0 +1,66 @@
+diff --git a/src/hector_moveit_actions/CMakeLists.txt b/src/hector_moveit_actions/CMakeLists.txt
+index 44f6a5b..4d89c95 100644
+--- a/src/hector_moveit_actions/CMakeLists.txt
++++ b/src/hector_moveit_actions/CMakeLists.txt
+@@ -2,7 +2,7 @@ cmake_minimum_required(VERSION 2.8.3)
+ set (CMAKE_CXX_STANDARD 11)
+ project(hector_moveit_actions)
+ 
+-find_package(catkin REQUIRED COMPONENTS roscpp actionlib actionlib_msgs geometry_msgs hector_uav_msgs)
++find_package(catkin REQUIRED COMPONENTS roscpp actionlib actionlib_msgs geometry_msgs hector_uav_msgs airsim_ros_pkgs)
+ find_package(Boost REQUIRED COMPONENTS system)
+ add_action_files(
+   DIRECTORY action
+@@ -20,10 +20,16 @@ catkin_package(
+ include_directories(${catkin_INCLUDE_DIRS} ${Boost_INCLUDE_DIRS})
+ 
+ add_executable(trajectory_controller src/trajectory_executer.cpp)
++add_executable(trajectory_controller_airsim src/trajectory_executer_airsim.cpp)
+ 
+ target_link_libraries(trajectory_controller ${catkin_LIBRARIES})
++target_link_libraries(trajectory_controller_airsim ${catkin_LIBRARIES})
+ 
+ add_dependencies(
+   trajectory_controller
+   ${hector_moveit_actions_EXPORTED_TARGETS} hector_uav_msgs_generate_messages
+ )
++add_dependencies(
++  trajectory_controller_airsim
++  ${hector_moveit_actions_EXPORTED_TARGETS} hector_uav_msgs_generate_messages
++)
+diff --git a/src/hector_moveit_exploration/CMakeLists.txt b/src/hector_moveit_exploration/CMakeLists.txt
+index 56969b0..6180584 100644
+--- a/src/hector_moveit_exploration/CMakeLists.txt
++++ b/src/hector_moveit_exploration/CMakeLists.txt
+@@ -26,6 +26,9 @@ endif()
+ include_directories(include ${OCTOMAP_INCLUDE_DIRS} ${catkin_INCLUDE_DIRS})
+ 
+ add_executable(hector_explorer src/Explorer.cpp src/explorer_node.cpp)
++add_executable(hector_explorer_airsim src/Explorer_airsim.cpp src/explorer_node.cpp)
+ target_compile_options(hector_explorer PRIVATE ${OpenMP_FLAGS} ${CMAKE_CXX_FLAGS})
+ target_link_libraries(hector_explorer ${OCTOMAP_LIBRARIES} ${catkin_LIBRARIES} ${Boost_LIBRARIES} ${OpenMP_LIBS})
++target_link_libraries(hector_explorer_airsim ${OCTOMAP_LIBRARIES} ${catkin_LIBRARIES} ${Boost_LIBRARIES} ${OpenMP_LIBS})
++target_link_libraries(hector_explorer_airsim ${OCTOMAP_LIBRARIES} ${catkin_LIBRARIES} ${Boost_LIBRARIES} ${OpenMP_LIBS})
+ add_dependencies(hector_explorer hector_uav_msgs_generate_messages hector_moveit_actions_generate_messages)
+diff --git a/src/hector_moveit_exploration/include/Explorer.h b/src/hector_moveit_exploration/include/Explorer.h
+index e87f5a4..659ebfd 100644
+--- a/src/hector_moveit_exploration/include/Explorer.h
++++ b/src/hector_moveit_exploration/include/Explorer.h
+@@ -30,8 +30,8 @@
+ #define XMAX 24.5
+ #define YMIN -16
+ #define YMAX 16
+-#define ZMIN 0.2
+-#define ZMAX 4.0
++#define ZMIN -0.02
++#define ZMAX 15.0
+ 
+ #define EPSILON 1e-4
+ 
+@@ -103,4 +103,4 @@ class Quadrotor{
+         void takeoff();
+         void run();
+         
+-};
+\ No newline at end of file
++};

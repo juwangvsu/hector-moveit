@@ -30,8 +30,8 @@
 #define XMAX 24.5
 #define YMIN -16
 #define YMAX 16
-#define ZMIN 0.2
-#define ZMAX 4.0
+#define ZMIN -0.02
+#define ZMAX 15.0
 
 #define EPSILON 1e-4
 
